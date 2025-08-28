@@ -1,11 +1,28 @@
-# Sample Snack app
+# 📦 App de Catálogo e Lista de Desejos
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+Este é um projeto de aplicativo móvel feito em **React Native**, que exibe um catálogo de produtos e permite ao usuário adicionar itens à **Lista de Desejos**, utilizando **AsyncStorage** para salvar os dados localmente.
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo cli](https://docs.expo.dev/get-started/installation/#expo-cli)).
+---
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+## 📝 Funcionalidades
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.dev/c/expo-dev-tools/61) or [Discord](https://chat.expo.dev/).
+- Login simples com usuário, senha e apelido.
+- Catálogo de produtos com:
+  - Nome, preço, categoria, imagem, avaliação e estoque.
+- Visualização de detalhes de cada produto.
+- Controle de quantidade de produtos no detalhe.
+- Adição de produtos ao carrinho (alerta de sucesso).
+- Adição de produtos à **Lista de Desejos**.
+- Visualização da **Lista de Desejos** com:
+  - Imagem e nome do produto.
+  - Botão para remover item da lista.
+- Armazenamento persistente usando **AsyncStorage**.
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+---
+
+## 🛠 Tecnologias Utilizadas
+
+- [React Native](https://reactnative.dev/)
+- [AsyncStorage](https://react-native-async-storage.github.io/async-storage/docs/install/)
+- [React Navigation](https://reactnavigation.org/)
+
