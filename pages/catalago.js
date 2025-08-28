@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,15 +10,32 @@ import {
   RefreshControl,
   ScrollView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const larguraTela = Dimensions.get("window").width;
 
 export default function TelaListaProdutos({ navigation, route }) {
-  const { apelido, setMostrarModal } = route.params;
+  const { setMostrarModal } = route.params;
   const [refreshing, setRefreshing] = useState(false);
+  const [apelido, setApelido] = useState("");
+
+  // 🔹 Carregar apelido do AsyncStorage
+  useEffect(() => {
+    const carregarApelido = async () => {
+      try {
+        const salvo = await AsyncStorage.getItem("apelido");
+        if (salvo) {
+          setApelido(salvo);
+        }
+      } catch (e) {
+        console.error("Erro ao carregar apelido:", e);
+      }
+    };
+    carregarApelido();
+  }, []);
 
   const produtos = [
-    {
+     {
       id: 1,
       nome: "Camisa Seleção",
       preco: 199.99,
@@ -180,7 +197,7 @@ export default function TelaListaProdutos({ navigation, route }) {
 
   const onRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       setRefreshing(false);
       setMostrarModal(true);
     }, 800);
@@ -199,11 +216,17 @@ export default function TelaListaProdutos({ navigation, route }) {
         resizeMode="contain"
       />
 
-
-
       <Text style={estilos.titulo}>
         Bem-vindo ao catálogo, {apelido}!
       </Text>
+
+
+      <TouchableOpacity
+    style={estilos.botaoDesejos}
+    onPress={() => navigation.navigate("ListaDesejos")}
+  >
+    <Text style={estilos.textoBotao}>❤️ Lista de Desejos</Text>
+  </TouchableOpacity>
 
       <FlatList
         data={produtos}
@@ -225,7 +248,7 @@ export default function TelaListaProdutos({ navigation, route }) {
             <Text style={estilos.seta}>➡️</Text>
           </TouchableOpacity>
         )}
-        scrollEnabled={false} // ✅ evita conflito de scroll
+        scrollEnabled={false}
       />
     </ScrollView>
   );
@@ -260,4 +283,16 @@ const estilos = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 20,
   },
+  botaoDesejos: {
+  backgroundColor: "#FF4C4C",
+  padding: 12,
+  borderRadius: 8,
+  alignItems: "center",
+  marginBottom: 15,
+},
+textoBotao: {
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: "bold",
+},
 });

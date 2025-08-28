@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import TelaListaProdutos from "./pages/catalago";
 import TelaDetalhesProduto from "./pages/detalhes";
+import ListaDesejos from "./pages/listaDesejos";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,18 +22,18 @@ export default function App() {
   const [mostrarModal, setMostrarModal] = useState(true);
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
-    const [apelido, setApelido] = useState("");
+  const [apelido, setApelido] = useState("");
 
   const validarLogin = async () => {
     if (!usuario.trim()) {
       Alert.alert("Erro", "Por favor, preencha o usuário!");
       return;
     }
-    if ( usuario === "Tupi" & senha === "123") {
+    if (usuario === "Tupi" && senha === "123") {
       try {
-        await AsyncStorage.setItem("usuario", usuario); // opcional: salva o último usuário
+        await AsyncStorage.setItem("apelido", apelido); // sempre salva o apelido novo
       } catch (e) {
-        console.error("Erro ao salvar usuário:", e);
+        console.error("Erro ao salvar apelido:", e);
       }
       setMostrarModal(false);
     } else {
@@ -60,7 +61,6 @@ export default function App() {
               secureTextEntry
               style={estilos.input}
             />
-
             <TextInput
               placeholder="Coloque seu Apelido"
               value={apelido}
@@ -80,14 +80,20 @@ export default function App() {
           <Stack.Screen
             name="ListaProdutos"
             component={TelaListaProdutos}
-          initialParams={{ apelido, setMostrarModal }}
+            initialParams={{ setMostrarModal }}
             options={{ title: "📦 Nossos Produtos" }}
           />
           <Stack.Screen
             name="TelaDetalhesProduto"
             component={TelaDetalhesProduto}
-      initialParams={{ apelido, setMostrarModal }}
+            initialParams={{setMostrarModal }}
             options={{ title: "Detalhes do Produto" }}
+          />
+
+          <Stack.Screen
+            name="ListaDesejos"
+            component={ListaDesejos}
+            options={{ title: "Lista de Desejos" }}
           />
         </Stack.Navigator>
       )}

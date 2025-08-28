@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,27 @@ import {
   Alert,
   Dimensions,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const larguraTela = Dimensions.get("window").width;
 
 export default function TelaDetalhesProduto({ route, navigation }) {
   const { produtoSelecionado } = route.params || {};
   const [quantidade, setQuantidade] = useState(1);
-   const { apelido } = route.params; 
+  const [apelido, setApelido] = useState("");
+
+  // 🔹 Carregar apelido direto do AsyncStorage
+  useEffect(() => {
+    const carregarApelido = async () => {
+      try {
+        const salvo = await AsyncStorage.getItem("apelido");
+        if (salvo) setApelido(salvo);
+      } catch (e) {
+        console.error("Erro ao carregar apelido:", e);
+      }
+    };
+    carregarApelido();
+  }, []);
 
   if (!produtoSelecionado) {
     return (
@@ -23,7 +37,10 @@ export default function TelaDetalhesProduto({ route, navigation }) {
           ❌ Nenhum produto encontrado!
         </Text>
         <TouchableOpacity
-          style={[estilos.botaoCarrinho, { marginTop: 20, backgroundColor: "#999" }]}
+          style={[
+            estilos.botaoCarrinho,
+            { marginTop: 20, backgroundColor: "#999" },
+          ]}
           onPress={() => navigation.goBack()}
         >
           <Text style={estilos.textoCarrinho}>⬅️ Voltar</Text>
@@ -50,6 +67,38 @@ export default function TelaDetalhesProduto({ route, navigation }) {
     );
   };
 
+
+
+  const adicionarListaDesejos = async () => {
+  try {
+    // Pegar a lista existente
+    const listaAtual = await AsyncStorage.getItem("listaDesejos");
+    const lista = listaAtual ? JSON.parse(listaAtual) : [];
+
+    // Novo item para adicionar
+    const novoItem = {
+      id: produtoSelecionado.id,
+      nome: produtoSelecionado.nome,
+      imagem: produtoSelecionado.imagem,
+    };
+
+    // Evitar duplicados
+    const existe = lista.some(item => item.id === novoItem.id);
+    if (existe) {
+      Alert.alert("Atenção", "Este produto já está na sua lista de desejos!");
+      return;
+    }
+
+    lista.push(novoItem);
+
+    await AsyncStorage.setItem("listaDesejos", JSON.stringify(lista));
+
+    Alert.alert("❤️ Sucesso!", `${produtoSelecionado.nome} adicionado à lista de desejos!`);
+  } catch (e) {
+    console.error("Erro ao adicionar à lista de desejos:", e);
+  }
+};
+
   return (
     <View style={estilos.container}>
       <Image
@@ -57,7 +106,8 @@ export default function TelaDetalhesProduto({ route, navigation }) {
         style={estilos.imagem}
         resizeMode="contain"
       />
- <Text style={estilos.titulo}>Bem-vindo ao Detalhes, {apelido}!</Text>
+
+      <Text style={estilos.titulo}>Bem-vindo ao Detalhes, {apelido}!</Text>
 
       <Text style={estilos.nome}>{produtoSelecionado.nome}</Text>
       <Text style={estilos.descricao}>{produtoSelecionado.descricao}</Text>
@@ -89,6 +139,15 @@ export default function TelaDetalhesProduto({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
+<TouchableOpacity
+  style={[estilos.botaoCarrinho, { backgroundColor: "#FF4C4C", marginTop: 10 }]}
+  onPress={adicionarListaDesejos}
+>
+  <Text style={estilos.textoCarrinho}>💖 Adicionar à Lista de Desejos</Text>
+</TouchableOpacity>
+
+    
+
       <TouchableOpacity
         style={estilos.botaoCarrinho}
         onPress={adicionarCarrinho}
@@ -113,7 +172,12 @@ const estilos = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "#f9f9f9",
   },
-  nome: { fontSize: 24, fontWeight: "bold", marginBottom: 10, textAlign: "center" },
+  nome: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
   descricao: {
     fontSize: 16,
     textAlign: "center",
@@ -142,11 +206,12 @@ const estilos = StyleSheet.create({
     backgroundColor: "#4CAF50",
     padding: 15,
     borderRadius: 8,
+    marginTop: 10,
     width: "80%",
     alignItems: "center",
   },
   textoCarrinho: { color: "#fff", fontSize: 16, fontWeight: "bold" },
-   titulo: {
+  titulo: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
