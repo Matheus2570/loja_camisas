@@ -70,6 +70,10 @@ export default function App() {
             <TouchableOpacity style={estilos.botao} onPress={validarLogin}>
               <Text style={estilos.textoBotao}>Entrar</Text>
             </TouchableOpacity>
+
+
+
+              
           </View>
         </View>
       </Modal>
