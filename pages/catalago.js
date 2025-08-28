@@ -7,7 +7,6 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  RefreshControl,
   ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,7 +15,6 @@ const larguraTela = Dimensions.get("window").width;
 
 export default function TelaListaProdutos({ navigation, route }) {
   const { setMostrarModal } = route.params;
-  const [refreshing, setRefreshing] = useState(false);
   const [apelido, setApelido] = useState("");
 
   // 🔹 Carregar apelido do AsyncStorage
@@ -35,7 +33,7 @@ export default function TelaListaProdutos({ navigation, route }) {
   }, []);
 
   const produtos = [
-     {
+  {
       id: 1,
       nome: "Camisa Seleção",
       preco: 199.99,
@@ -195,21 +193,8 @@ export default function TelaListaProdutos({ navigation, route }) {
     navigation.navigate("TelaDetalhesProduto", { produtoSelecionado: produto });
   };
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(async () => {
-      setRefreshing(false);
-      setMostrarModal(true);
-    }, 800);
-  };
-
   return (
-    <ScrollView
-      style={estilos.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
+    <ScrollView style={estilos.container}>
       <Image
         source={require("../assets/Logo.png")}
         style={estilos.logo}
@@ -220,13 +205,20 @@ export default function TelaListaProdutos({ navigation, route }) {
         Bem-vindo ao catálogo, {apelido}!
       </Text>
 
-
       <TouchableOpacity
-    style={estilos.botaoDesejos}
-    onPress={() => navigation.navigate("ListaDesejos")}
-  >
-    <Text style={estilos.textoBotao}>❤️ Lista de Desejos</Text>
-  </TouchableOpacity>
+        style={estilos.botaoDesejos}
+        onPress={() => navigation.navigate("ListaDesejos")}
+      >
+        <Text style={estilos.textoBotao}>❤️ Lista de Desejos</Text>
+      </TouchableOpacity>
+
+      {/* 🔹 Botão para voltar ao modal */}
+      <TouchableOpacity
+        style={[estilos.botaoDesejos, { backgroundColor: "#4CAF50" }]}
+        onPress={() => setMostrarModal(true)}
+      >
+        <Text style={estilos.textoBotao}>🔙 Sair</Text>
+      </TouchableOpacity>
 
       <FlatList
         data={produtos}
@@ -284,15 +276,15 @@ const estilos = StyleSheet.create({
     marginBottom: 20,
   },
   botaoDesejos: {
-  backgroundColor: "#FF4C4C",
-  padding: 12,
-  borderRadius: 8,
-  alignItems: "center",
-  marginBottom: 15,
-},
-textoBotao: {
-  color: "#fff",
-  fontSize: 16,
-  fontWeight: "bold",
-},
+    backgroundColor: "#FF4C4C",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  textoBotao: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
